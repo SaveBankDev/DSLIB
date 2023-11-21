@@ -418,11 +418,11 @@ async function calc(allRoutes,centralVillage,villagesData) {
 
     console.log("Average thourghput Before: " + before);
     console.log("Max:", Math.max(...beforeMap.values()));
-    console.log("Min:", Math.min(...(beforeMap.values().filter(v=>v > 0))));
+    console.log("Min:", Math.min(...(new Map([...beforeMap].filter(([k, v]) => v > 0 ))).values()));
 
     console.log("Average thourghput After: " + after);
     console.log("Max:", Math.max(...afterMap.values()));
-    console.log("Min:", Math.min(...(afterMap.values().filter(v=>v > 0))));
+    console.log("Min:", Math.min(...(new Map([...afterMap].filter(([k, v]) => v > 0 ))).values()));
     return allRoutes;
 }
 
