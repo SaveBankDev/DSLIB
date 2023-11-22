@@ -367,7 +367,6 @@ async function start(middleVillage,group) {
     let l = await getDataIncoming(group.id).catch(e=>alert(e))
     villagesData = r;
     transportData = l;
-    console.log("please fucking work"),
         console.log("list_production", r),
         console.log("map_farm_usage", s),
         console.log("map_incoming", l),
@@ -1017,27 +1016,6 @@ async function createTable(e, t, n, o) {
 
 function formatNumber(e) {
     return (new Intl.NumberFormat).format(e)
-}
-
-function getGroups() {
-    return new Promise((_0x4a8e0f,_0x4afc09)=>{
-            const _0x506def = _0xd2e4;
-            let _0x21c71 = game_data[_0x506def(0x109)] + 'overview_villages&mode=groups&type=static&group=0'
-                , _0x566e46 = httpGet(_0x21c71);
-            const _0xa356d2 = new DOMParser()
-                , _0x48b2f4 = _0xa356d2[_0x506def(0x15c)](_0x566e46, _0x506def(0x247));
-            console[_0x506def(0x1ca)](_0x48b2f4);
-            let _0x245fde = [];
-            game_data[_0x506def(0x1d6)] == _0x506def(0x14b) ? _0x245fde = Array['from']($(_0x48b2f4)['find'](_0x506def(0x178)))['map'](_0x12f19d=>({
-                'href': game_data['link_base_pure'] + ('overview_villages&mode=combined&group=' + _0x12f19d[_0x506def(0x205)](_0x506def(0x146)) + _0x506def(0x14e)),
-                'groupName': _0x12f19d[_0x506def(0x226)][_0x506def(0x135)]()['replace']('[', '')['replace'](']', '')[_0x506def(0x11f)]('<', '')[_0x506def(0x11f)]('>', '')
-            })) : _0x245fde = Array[_0x506def(0x1c5)]($(_0x48b2f4)[_0x506def(0x23c)]('.vis_item')[_0x506def(0x23c)](_0x506def(0x243))[_0x506def(0x23c)](_0x506def(0x1ef)))[_0x506def(0x18d)](_0x5ae2f3=>({
-                'href': _0x5ae2f3[_0x506def(0x1aa)] + _0x506def(0x14e),
-                'groupName': _0x5ae2f3[_0x506def(0x226)][_0x506def(0x135)]()[_0x506def(0x11f)]('[', '')['replace'](']', '')['replace']('<', '')[_0x506def(0x11f)]('>', '')
-            })),
-                _0x4a8e0f(_0x245fde);
-        }
-    );
 }
 
 function go() {
