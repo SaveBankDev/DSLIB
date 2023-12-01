@@ -18,7 +18,7 @@ var scriptConfig = {
         version: 'v1',
         author: 'secundum',
         authorUrl: '',
-        helpLink: '',
+        helpLink: 'https://forum.tribalwars.net/index.php?threads/barb-former.291645/',
     },
     translations: {
         en_DK: {
@@ -34,6 +34,7 @@ var scriptConfig = {
 			'Calculate Commands':'Calculate Commands',
 			'Export as WB format':'Export as WB format',
 			'Max. Distance':'Max. Distance',
+            'Max lvl reduction per command':'reduce Level/command',
         },
         de_DE: {
             'Barbarian Village Former': 'Barbarendorf Teraformer',
@@ -48,6 +49,7 @@ var scriptConfig = {
 			'Calculate Commands':'Berechne Befehle',
             'Export as WB format':'Kopiere Workbench Befehle',
             'Max. Distance':'Maximale Distanz',
+            'Max lvl reduction per command':'Level kattern/Befehl',
         },
     },
     allowedMarkets: [],
@@ -57,7 +59,7 @@ var scriptConfig = {
     enableCountApi: false,
 };
 
-$.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net/gh/DSsecundum/DSLIB@main/barbFormer.js`, async function() {
+$.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript.src}`, async function() {
     // Initialize Library
     await twSDK.init(scriptConfig);
     const scriptInfo = twSDK.scriptInfo();
@@ -66,6 +68,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
     let troopData = [];
     let unitInfo = await twSDK.getWorldUnitInfo();
     const catRamSpeed = parseInt(unitInfo.config.ram.speed);
+	let maxStep = 2;
 
     console.log();
 
@@ -115,7 +118,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
     function addFilterHandlers() {
         jQuery('#raGroupsFilter').on('change', function(e) {
             e.preventDefault();
-
             if (DEBUG) {
                 console.debug(`${scriptInfo()} selected group ID: `, e.target.value);
             }
@@ -131,19 +133,41 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
         jQuery('#raMaxAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
         jQuery('#raMaxAmount').on('change', function(e) {
             e.preventDefault();
+			e.target.value = e.target.value.replace(/\D/g,'')
             if (DEBUG) {
                 console.debug(`${scriptInfo()} Max Distance: `, e.target.value);
             }
+			if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
+                jQuery('#raMaxAmount').val('1');
+				e.target.value=1;
+            }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, e.target.value);
+        });
+        jQuery('#raMaxStep').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2')
+		maxStep=parseInt(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2');
+        jQuery('#raMaxStep').on('change', function(e) {
+			e.target.value = e.target.value.replace(/\D/g,'')
+            e.preventDefault();
+            if (DEBUG) {
+                console.debug(`${scriptInfo()} Max Step: `, e.target.value);
+            }
+			if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
+                jQuery('#raMaxStep').val('1');
+				e.target.value=1;
+            }
+            localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_step`, e.target.value);
+			maxStep=parseInt(e.target.value);
         });
         jQuery('#raMinAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`) ?? '0')
         jQuery('#raMinAmount').on('change', function(e) {
+			e.target.value = e.target.value.replace(/\D/g,'')
             e.preventDefault();
             if (DEBUG) {
                 console.debug(`${scriptInfo()} min building level: `, e.target.value);
             }
-            if (e.target.value > 29) {
+            if (e.target.value > 29 || isNaN(parseInt(e.target.value))) {
                 jQuery('#raMinAmount').val('29');
+				e.target.value=29;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_min_level`, e.target.value);
         });
@@ -235,6 +259,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
 			    <div>
 					<label>${twSDK.tt('Max. Distance')}</label>
 					<input id="raMaxAmount" type="text" value="30">
+				</div>
+                                                         
+                                                         <div>
+					<label>${twSDK.tt('Max lvl reduction per command')}</label>
+					<input id="raMaxStep" type="text" value="1">
 				</div>
 				<div>
 					<label>${twSDK.tt('Min. Level')}</label>
@@ -488,7 +517,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
             if (playerVillage.axe >= axesRequired && playerVillage.spy >= 1) {
                 // Reduce wall level to 0
                 let ramsReq = ramsRequired[barbarianVillage.wall];
-                let maxReduction = requiredCatas(playerVillage.catapult, barbarianVillage.building, minLevel, 2);
+                let maxReduction = requiredCatas(playerVillage.catapult, barbarianVillage.building, minLevel, maxStep);
                 let catapultsRequired = catsRequiredToBreak[barbarianVillage.building - maxReduction][barbarianVillage.building];
 
                 // Check any building reduction can be done
