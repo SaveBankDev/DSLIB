@@ -7,7 +7,7 @@
 
 // User Input
 if (typeof DEBUG !== 'boolean')
-    DEBUG = true;
+    DEBUG = false;
 
 // Script Config
 // Script Config
@@ -352,7 +352,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
                 }
             } catch (e) {
                 //not usable Report
-                console.log(e);
+                //console.log(e);
             }
 
         }, function() {
@@ -363,6 +363,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=https://cdn.jsdelivr.net
                 wbCommands += convertWbCommand(command,i);
                 i++;
             });
+		if(commands.length==0){
+				UI.SuccessMessage("All perfect");
+			}
             $('#barbCoordsList').val(wbCommands);
             const content = ``;
             }, function(error) {
