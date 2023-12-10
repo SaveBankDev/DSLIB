@@ -28,13 +28,14 @@ var scriptConfig = {
             'There was an error!': 'There was an error!',
             'There was an error while fetching the report data!':
                 'There was an error while fetching the report data!',
-			'Min. Level':'Min. Level',
-			'Building':'Building',
-			'Group':'Group',
-			'Calculate Commands':'Calculate Commands',
-			'Export as WB format':'Export as WB format',
-			'Max. Distance':'Max. Distance',
+            'Min. Level':'Min. Level',
+            'Building':'Building',
+            'Group':'Group',
+            'Calculate Commands':'Calculate Commands',
+            'Export as WB format':'Export as WB format',
+            'Max. Distance':'Max. Distance',
             'Max lvl reduction per command':'reduce Level/command',
+            'Spy Count':'Spy Count',
         },
         de_DE: {
             'Barbarian Village Former': 'Barbarendorf Teraformer',
@@ -43,13 +44,14 @@ var scriptConfig = {
             'There was an error!': 'Es gab einen Fehler!',
             'There was an error while fetching the report data!':
                 'Es gab einen fehler beim laden der Berichte!',
-			'Min. Level':'Min. Level',
-			'Building':'Gebeude',
-			'Group':'Gruppe',
-			'Calculate Commands':'Berechne Befehle',
+            'Min. Level':'Min. Level',
+            'Building':'Gebeude',
+            'Group':'Gruppe',
+            'Calculate Commands':'Berechne Befehle',
             'Export as WB format':'Kopiere Workbench Befehle',
             'Max. Distance':'Maximale Distanz',
             'Max lvl reduction per command':'Level kattern/Befehl',
+            'Spy Count':'Spy Anzahl',
         },
     },
     allowedMarkets: [],
@@ -68,7 +70,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     let troopData = [];
     let unitInfo = await twSDK.getWorldUnitInfo();
     const catRamSpeed = parseInt(unitInfo.config.ram.speed);
-	let maxStep = 2;
+    let maxStep = 2;
 
     console.log();
 
@@ -130,48 +132,65 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         fetchTroopsForCurrentGroup(parseInt(groupOnLoad ?? 0)).then(function a(result) {
             troopData = result
         });
-        jQuery('#raMaxAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
-        jQuery('#raMaxAmount').on('change', function(e) {
+        localStorage.setItem(`${scriptConfig.scriptData.prefix}_spy`,localStorage.getItem(`${scriptConfig.scriptData.prefix}_spy`) ?? '1')
+        jQuery('#raSpy').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_spy`) ?? '1')
+        jQuery('#raSpy').on('change', function(e) {
             e.preventDefault();
-			e.target.value = e.target.value.replace(/\D/g,'')
+            e.target.value = e.target.value.replace(/\D/g,'')
             if (DEBUG) {
-                console.debug(`${scriptInfo()} Max Distance: `, e.target.value);
+                console.debug(`${scriptInfo()} Spy count: `, e.target.value);
             }
-			if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
+            if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
                 jQuery('#raMaxAmount').val('1');
-				e.target.value=1;
+                e.target.value=1;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, e.target.value);
         });
+        localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`,localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
+        jQuery('#raMaxAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
+        jQuery('#raMaxAmount').on('change', function(e) {
+            e.preventDefault();
+            e.target.value = e.target.value.replace(/\D/g,'')
+            if (DEBUG) {
+                console.debug(`${scriptInfo()} Max Distance: `, e.target.value);
+            }
+            if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
+                jQuery('#raMaxAmount').val('1');
+                e.target.value=1;
+            }
+            localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, e.target.value);
+        });
+        localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_step`,localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2')
         jQuery('#raMaxStep').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2')
-		maxStep=parseInt(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2');
+        maxStep=parseInt(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2');
         jQuery('#raMaxStep').on('change', function(e) {
-			e.target.value = e.target.value.replace(/\D/g,'')
+            e.target.value = e.target.value.replace(/\D/g,'')
             e.preventDefault();
             if (DEBUG) {
                 console.debug(`${scriptInfo()} Max Step: `, e.target.value);
             }
-			if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
+            if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
                 jQuery('#raMaxStep').val('1');
-				e.target.value=1;
+                e.target.value=1;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_step`, e.target.value);
-			maxStep=parseInt(e.target.value);
+            maxStep=parseInt(e.target.value);
         });
+        localStorage.setItem(`${scriptConfig.scriptData.prefix}_min_level`,localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`) ?? '0')
         jQuery('#raMinAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`) ?? '0')
         jQuery('#raMinAmount').on('change', function(e) {
-			e.target.value = e.target.value.replace(/\D/g,'')
+            e.target.value = e.target.value.replace(/\D/g,'')
             e.preventDefault();
             if (DEBUG) {
                 console.debug(`${scriptInfo()} min building level: `, e.target.value);
             }
             if (e.target.value > 29 || isNaN(parseInt(e.target.value))) {
                 jQuery('#raMinAmount').val('29');
-				e.target.value=29;
+                e.target.value=29;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_min_level`, e.target.value);
         });
-
+        localStorage.setItem(`${scriptConfig.scriptData.prefix}_chosen_building`,localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_building`) ?? 'smith')
         jQuery('#raBuildingFilter').on('change', function(e) {
             e.preventDefault();
             if (DEBUG) {
@@ -260,8 +279,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 					<label>${twSDK.tt('Max. Distance')}</label>
 					<input id="raMaxAmount" type="text" value="30">
 				</div>
-                                                         
                                                          <div>
+					<label>${twSDK.tt('Spy Count')}</label>
+					<input id="raSpy" type="text" value="1">
+				</div>
+                       <div>
 					<label>${twSDK.tt('Max lvl reduction per command')}</label>
 					<input id="raMaxStep" type="text" value="1">
 				</div>
@@ -392,9 +414,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                 wbCommands += convertWbCommand(command,i);
                 i++;
             });
-		if(commands.length==0){
-				UI.SuccessMessage("All perfect");
-			}
+            if(commands.length==0){
+                UI.SuccessMessage("All perfect");
+            }
             $('#barbCoordsList').val(wbCommands);
             const content = ``;
             }, function(error) {
