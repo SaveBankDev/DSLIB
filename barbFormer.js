@@ -437,8 +437,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         const combinations = [];
 
         for (const playerVillage of playerVillages) {
-            playerVillage.axe = 1000;
-            // TODO remove test variable
             for (const barbarianVillage of barbarianVillages) {
                 const distance = twSDK.calculateDistance(playerVillage.coord, barbarianVillage.coord);
                 const wallPossible = barbarianVillage.wall > 0 && playerVillage.ram >= ramsMin[barbarianVillage.wall] && playerVillage.axe >= troopStrengthRequired(barbarianVillage.wall) / 30;
