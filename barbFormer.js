@@ -199,16 +199,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         jQuery('#calculateLaunchTimes').on('click', function (e) {
             e.preventDefault();
 
-            // Collect user input and destination village
-            const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
-            // parseInt(jQuery('#raMaxAmount').val().trim());
-            const minAmount = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
-            // parseInt(jQuery('#raMinAmount').val().trim());
-
-            const groupId = localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_group`);
-            const building = localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_building`);
-
-            getReports(building, minAmount);
+            // Start all the calculations
+            // TODO Rename functions
+            getReports();
 
         });
         jQuery('#exportBBCodeBtn').on('click', function (e) {
@@ -370,8 +363,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // Render: Build user interface
-    function getReports(buildingType, minLevel) {
+    function getReports() {
 
+        const buildingType = localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_building`);
         const reportData = [];
         const reportUrls = getReportUrls();
         twSDK.startProgressBar(reportUrls.length);
@@ -416,7 +410,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                 UI.SuccessMessage("All perfect");
             }
             $('#barbCoordsList').val(wbCommands);
-            const content = ``;
         }, function (error) {
             UI.ErrorMessage(twSDK.tt('There was an error while fetching the report data!'));
             console.error(`${scriptInfo} Error: `, error);
@@ -610,11 +603,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
         // maxDistance for attacks
         const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
-        // parseInt(jQuery('#raMaxAmount').val().trim());
 
         // Your desired min building Level
         const minLevel = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
-        // parseInt(jQuery('#raMinAmount').val().trim());
 
 
         const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance);
@@ -625,7 +616,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     function convertWbCommand(c, i) {
-        // let wbCommand = `${id}&${VillageInfo.village_id}&${unit}&${arrivalTime}&${attackType}&false&false&${unit}=${btoa(unitAmount)}\\n`;
         return `${c.playerVillage.villageId}&${c.barbarianVillage.villageId}&${c.ram > 0 ? 'ram' : 'catapult'}&${arrivalByDistance(c.distance, i)}&9&false&false&` + `spear=/sword=/axe=${btoa(c.axe)}/archer=/spy=${btoa(c.spy)}/light=/marcher=/heavy=/ram=${btoa(c.ram)}/catapult=${btoa(c.catapult)}/knight=/snob=/militia=MA==\n`;
     }
 
