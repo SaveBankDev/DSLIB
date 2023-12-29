@@ -1,5 +1,5 @@
 /*
- * Script Name: Barbarian Vilalge Former
+ * Script Name: Barbarian Village Former
  * Version: v1
  * Last Updated: 2023-12-01
  * Author Contact: secundum
@@ -44,7 +44,7 @@ var scriptConfig = {
             'There was an error while fetching the report data!':
                 'Es gab einen fehler beim laden der Berichte!',
             'Min. Level': 'Min. Level',
-            'Building': 'Gebeude',
+            'Building': 'Gebaeude',
             'Group': 'Gruppe',
             'Calculate Commands': 'Berechne Befehle',
             'Export as WB format': 'Kopiere Workbench Befehle',
@@ -496,14 +496,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
             // No catapults needed if already at or below the minLevel or not enough of them
         }
 
-        // Check the maximum amount of building levels that need to be destroyed
-        let maxDestroyed = currentLevel - minLevel;
-
         // Check if the maximum amount of building levels that need to be destroyed is smaller than maxStep and reduce maxStep accordingly if needed
-        maxStep = maxDestroyed < maxStep ? maxDestroyed : maxStep;
+        let maxDestroyed = (currentLevel - minLevel) < maxStep ? (currentLevel - minLevel) : maxStep;
 
         // Iterate top down through the cata steps until we find  the biggest cata step we can do with the amount of catas we have and within the maxStep
-        for (let i = maxStep; i == 0; i--) {
+        for (let i = maxDestroyed; i == 0; i--) {
 
             // Gets the required catas to destroy "i" building levels
             const catasRequired = catsRequiredToBreak[currentLevel - i][currentLevel];
@@ -551,6 +548,8 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                         catapultsRequired = 0;
                     }
                     playerVillage.axe -= axesRequired;
+
+
                     // Update dLastAttack for the barbarian village
                     const distance = twSDK.calculateDistance(playerVillage.coord, barbarianVillage.coord);
                     barbarianVillage.dLastAttack = distance
@@ -564,14 +563,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                         reducedBuildingLevel: maxReduction,
                         distance: distance,
                     });
-
-                } else {
-                    break;
-                    //not enough rams or catapults
                 }
-            } else {
-                break;
-                // not enough axes to accommodate troops
             }
         }
 
