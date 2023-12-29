@@ -69,7 +69,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     let troopData = [];
     let unitInfo = await twSDK.getWorldUnitInfo();
     const catRamSpeed = parseInt(unitInfo.config.ram.speed);
-    let maxStep = 2;
 
     console.log();
 
