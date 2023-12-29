@@ -10,7 +10,6 @@ if (typeof DEBUG !== 'boolean')
     DEBUG = false;
 
 // Script Config
-// Script Config
 var scriptConfig = {
     scriptData: {
         prefix: 'barbFormer',
@@ -101,7 +100,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     (async function () {
         try {
             if (isValidScreen && isValidMode) {
-                // build user interface
+                // Build user interface
                 const groups = await fetchVillageGroups();
                 renderUI(groups);
                 addFilterHandlers()
@@ -201,11 +200,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         jQuery('#calculateLaunchTimes').on('click', function (e) {
             e.preventDefault();
 
-            // collect user input and destination village
+            // Collect user input and destination village
             const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
-            //parseInt(jQuery('#raMaxAmount').val().trim());
+            // parseInt(jQuery('#raMaxAmount').val().trim());
             const minAmount = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
-            //parseInt(jQuery('#raMinAmount').val().trim());
+            // parseInt(jQuery('#raMinAmount').val().trim());
 
             const groupId = localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_group`);
             const building = localStorage.getItem(`${scriptConfig.scriptData.prefix}_chosen_building`);
@@ -382,7 +381,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(data, 'text/html');
-            //read building data
+            // Read building data
             let report = null;
             try {
                 report = JSON.parse(jQuery(htmlDoc).find('#attack_spy_building_data')[0].defaultValue);
@@ -402,8 +401,8 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                     reportData.push(reportInfo);
                 }
             } catch (e) {
-                //not usable Report
-                //console.log(e);
+                // Not usable Report
+                // console.log(e);
             }
 
         }, function () {
@@ -425,10 +424,10 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         });
     }
 
-    // retourne force d'attaque necessaire
+    // returns necessary amount of axes
     function troopStrengthRequired(wallLevel) {
-        // heuristique: 30 haches(Force d'attaque=40) * <niveau mur>
-        // +10 haches en bonus
+        // calculation: 30 axes(Attack strength=40) * <wall level>
+        // +10 bonus axes
         return 30 * 40 * wallLevel;
     }
 
@@ -577,11 +576,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
                 } else {
                     break;
-                    //no enough ramms or catapults
+                    //not enough rams or catapults
                 }
             } else {
                 break;
-                // not enough axes to accomedate troops
+                // not enough axes to accommodate troops
             }
         }
 
@@ -607,15 +606,17 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
     // Helper: Do farming calculations
     function doCalculations(farmingData) {
-        //todo combine calculations
+        // TODO Combine calculations
         console.log('Starting calculating Commands...');
 
-        const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
-        //parseInt(jQuery('#raMaxAmount').val().trim());
         // maxDistance for attacks
+        const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
+        // parseInt(jQuery('#raMaxAmount').val().trim());
+
+        // Your desired min building Level
         const minLevel = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
-        //parseInt(jQuery('#raMinAmount').val().trim());
-        //  your desired min building Level
+        // parseInt(jQuery('#raMinAmount').val().trim());
+
 
         const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance);
         console.log(troopCombinations);
@@ -625,7 +626,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     function convertWbCommand(c, i) {
-        //let wbCommand = `${id}&${VillageInfo.village_id}&${unit}&${arrivalTime}&${attackType}&false&false&${unit}=${btoa(unitAmount)}\\n`;
+        // let wbCommand = `${id}&${VillageInfo.village_id}&${unit}&${arrivalTime}&${attackType}&false&false&${unit}=${btoa(unitAmount)}\\n`;
         return `${c.playerVillage.villageId}&${c.barbarianVillage.villageId}&${c.ram > 0 ? 'ram' : 'catapult'}&${arrivalByDistance(c.distance, i)}&9&false&false&` + `spear=/sword=/axe=${btoa(c.axe)}/archer=/spy=${btoa(c.spy)}/light=/marcher=/heavy=/ram=${btoa(c.ram)}/catapult=${btoa(c.catapult)}/knight=/snob=/militia=MA==\n`;
     }
 
@@ -661,7 +662,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
                 const combinedTableHeader = [];
 
-                // collect possible buildings and troop types
+                // Collect possible buildings and troop types
                 jQuery(combinedTableHead).each(function () {
                     const thImage = jQuery(this).find('img').attr('src');
                     if (thImage) {
@@ -673,7 +674,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                     }
                 });
 
-                // collect possible troop types
+                // Collect possible troop types
                 combinedTableRows.each(function () {
                     let rowTroops = {};
 
