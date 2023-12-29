@@ -500,25 +500,30 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     const catsMin = [0, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10, 11, 12, 13, 15, 16, 17, 19, 20];
     /*to break a building at level [i] by 1*/
 
-    // returns the max pissible level reduction
+    // returns the max possible level reduction towards minLevel within maxStep
     function requiredCatas(maxCata, currentLevel, minLevel, maxStep) {
         if (currentLevel <= minLevel || catsMin[currentLevel] > maxCata) {
             return 0;
             // No catapults needed if already at or below the minLevel or not enough of them
         }
-        // reduce minLevel if reuction would be greater than max steps.
-        minLevel = (currentLevel - minLevel) > maxStep ? maxStep : minLevel;
 
-        let remainingLevels = currentLevel - minLevel;
-        let totalCatas = 0;
+        // Check the maximum amount of building levels that need to be destroyed
+        let maxDestroyed = currentLevel - minLevel;
 
-        // Iterate through the catasRequiredArray to calculate the required catapults
-        for (let i = minLevel; i <= currentLevel; i++) {
-            const catasRequired = catsRequiredToBreak[i][currentLevel];
+        // Check if the maximum amount of building levels that need to be destroyed is smaller than maxStep and reduce maxStep accordingly if needed
+        maxStep = maxDestroyed < maxStep ? maxDestroyed : maxStep;
 
+        // Iterate top down through the cata steps until we find  the biggest cata step we can do with the amount of catas we have and within the maxStep
+        for (let i = maxStep; i == 0; i--) {
+
+            // Gets the required catas to destroy "i" building levels
+            const catasRequired = catsRequiredToBreak[currentLevel - i][currentLevel];
+
+            // if we have enough catas in the village to destroy "i" building levels we return the amount of destroyed levels
+            // otherwise we run the loop again decreasing the amount of destroyed building levels until we have enough catas
+            // we should have enough catas for "i == 1" since we checked at the start
             if (maxCata >= catasRequired) {
-                // If maxCata is enough to break to the next level, use the maximum possible
-                return currentLevel - i;
+                return i;
             }
         }
 
