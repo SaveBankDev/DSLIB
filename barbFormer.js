@@ -139,21 +139,21 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                 console.debug(`${scriptInfo()} Spy count: `, e.target.value);
             }
             if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
-                jQuery('#raMaxAmount').val('1');
+                jQuery('#raSpy').val('1');
                 e.target.value = 1;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, e.target.value);
         });
         localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
-        jQuery('#raMaxAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
-        jQuery('#raMaxAmount').on('change', function (e) {
+        jQuery('#raMaxDistance').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`) ?? '10')
+        jQuery('#raMaxDistance').on('change', function (e) {
             e.preventDefault();
             e.target.value = e.target.value.replace(/\D/g, '')
             if (DEBUG) {
                 console.debug(`${scriptInfo()} Max Distance: `, e.target.value);
             }
             if (e.target.value < 1 || isNaN(parseInt(e.target.value))) {
-                jQuery('#raMaxAmount').val('1');
+                jQuery('#raMaxDistance').val('1');
                 e.target.value = 1;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_distance`, e.target.value);
@@ -268,7 +268,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 			<div class="ra-grid">
 			    <div>
 					<label>${twSDK.tt('Max. Distance')}</label>
-					<input id="raMaxAmount" type="text" value="30">
+					<input id="raMaxDistance" type="text" value="30">
 				</div>
                                                          <div>
 					<label>${twSDK.tt('Spy Count')}</label>
