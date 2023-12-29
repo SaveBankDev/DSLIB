@@ -425,10 +425,10 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // returns necessary amount of axes
-    function troopStrengthRequired(wallLevel) {
-        // calculation: 30 axes(Attack strength=40) * <wall level>
+    function axesRequired(wallLevel) {
+        // calculation: 30 axes * <wall level>
         // +10 bonus axes
-        return 30 * 40 * wallLevel;
+        return 30 * wallLevel + 10;
     }
 
     // Function to calculate all possible combinations of player villages and barbarian villages
@@ -438,7 +438,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         for (const playerVillage of playerVillages) {
             for (const barbarianVillage of barbarianVillages) {
                 const distance = twSDK.calculateDistance(playerVillage.coord, barbarianVillage.coord);
-                const wallPossible = barbarianVillage.wall > 0 && playerVillage.ram >= ramsMin[barbarianVillage.wall] && playerVillage.axe >= troopStrengthRequired(barbarianVillage.wall) / 30;
+                const wallPossible = barbarianVillage.wall > 0 && playerVillage.ram >= ramsMin[barbarianVillage.wall] && playerVillage.axe >= axesRequired(barbarianVillage.wall);
                 const catPossible = barbarianVillage.building > minLevel && playerVillage.catapult >= catsMin[barbarianVillages.building];
                 // Check if the distance is within the maximum allowed distance and any reduction is possible
                 if (distance <= maxDistance && (wallPossible || catPossible)) {
@@ -535,7 +535,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
 
         while (barbarianVillage.wall > 0 || barbarianVillage.building > minLevel) {
             // Calculate the required axes for rams and catapults
-            const axesRequired = Math.ceil(troopStrengthRequired(barbarianVillage.wall) / 30);
+            const axesRequired = Math.ceil(axesRequired(barbarianVillage.wall));
 
             // Check if the available troops are sufficient in the player village
             if (playerVillage.axe >= axesRequired && playerVillage.spy >= 1) {
