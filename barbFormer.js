@@ -520,7 +520,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // Function to find troop combinations for a specific attack with consideration of dLastAttack
-    function findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep) {
+    function findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep, spyAmount) {
         let combinations = [];
 
 
@@ -529,7 +529,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
             const axesRequired = Math.ceil(axesRequired(barbarianVillage.wall));
 
             // Check if the available troops are sufficient in the player village
-            if (playerVillage.axe >= axesRequired && playerVillage.spy >= 1) {
+            if (playerVillage.axe >= axesRequired && playerVillage.spy >= spyAmount) {
                 // Reduce wall level to 0
                 let ramsReq = ramsRequired[barbarianVillage.wall];
                 let maxReduction = requiredCatas(playerVillage.catapult, barbarianVillage.building, minLevel, maxStep);
@@ -558,7 +558,7 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                         barbarianVillage,
                         playerVillage,
                         axe: axesRequired,
-                        spy: 1,
+                        spy: spyAmount,
                         ram: ramsReq,
                         catapult: catapultsRequired,
                         reducedBuildingLevel: maxReduction,
@@ -579,14 +579,14 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // Function to find troop combinations for all attacks with consideration of dLastAttack
-    function findTroopCombinations(playerVillages, barbarianVillages, minLevel, maxDistance) {
+    function findTroopCombinations(playerVillages, barbarianVillages, minLevel, maxDistance, maxStep, spyAmount) {
         let result = [];
 
         const allCombinations = calculateAllCombinations(playerVillages, barbarianVillages, minLevel, maxDistance);
 
         for (const combination of allCombinations) {
             const { playerVillage, barbarianVillage } = combination;
-            const troopCombinations = findTroopCombination(playerVillage, barbarianVillage, minLevel);
+            const troopCombinations = findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep, spyAmount);
 
             if (troopCombinations.length) {
                 result = result.concat(troopCombinations);
@@ -609,8 +609,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         // desired maxStep
         const maxStep = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`);
 
+        // desired spys per attack
+        const spyAmount = localStorage.getItem(`${scriptConfig.scriptData.prefix}_spy`);
 
-        const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance, maxStep);
+
+        const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance, maxStep, spyAmount);
         console.log(troopCombinations);
         console.log('##Done##')
         return troopCombinations;
