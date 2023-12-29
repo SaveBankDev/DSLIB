@@ -603,13 +603,13 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         // maxDistance for attacks
         const maxDistance = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_distance`);
 
-        // Your desired min building Level
+        // minimum building level
         const minLevel = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
 
-        // desired maxStep
+        // max amount of building levels to destroy
         const maxStep = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`);
 
-        // desired spys per attack
+        // amount of spys in a attack
         const spyAmount = localStorage.getItem(`${scriptConfig.scriptData.prefix}_spy`);
 
 
