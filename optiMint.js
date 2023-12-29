@@ -1,52 +1,52 @@
 function getDataProduction(groupId) {
-    return new Promise((e,t)=>{
-            let n = game_data.link_base_pure + `overview_villages&mode=prod&group=${groupId}`
-                , o = httpGet(n);
-            const a = (new DOMParser).parseFromString(o, "text/html");
-            let r = [];
-            if ($(a).find(".paged-nav-item").parent().find("select").length > 0)
-                Array.from($(a).find(".paged-nav-item").parent().find("select").find("option")).forEach(function(e) {
-                    r.push(e.value)
-                }),
-                    r.pop();
-            else if (a.getElementsByClassName("paged-nav-item").length > 0) {
-                let e = 0;
-                Array.from(a.getElementsByClassName("paged-nav-item")).forEach(function(t) {
-                    let n = t.href;
-                    n = n.split("page=")[0] + "page=" + e,
-                        e++,
-                        r.push(n)
-                })
-            } else
-                r.push(n);
-            r = r.reverse();
-            let s = []
-                , l = new Map;
-            !function n(o) {
-                let a;
-                a = o.length > 0 ? o.pop() : "stop",
-                    console.log(a);
-                let i = (new Date).getTime();
-                o.length >= 0 && "stop" != a ? $.ajax({
-                    url: a,
-                    method: "get",
-                    success: e=>{
-                        const t = (new DOMParser).parseFromString(e, "text/html");
-                        if ("desktop" == game_data.device) {
-                            let e = Array.from($(t).find(".row_a, .row_b"));
-                            for (let t = 0; t < e.length; t++) {
-                                let n = e[t].getElementsByClassName("quickedit-vn")[0].innerText
-                                    , o = e[t].getElementsByClassName("quickedit-vn")[0].innerText.match(/[0-9]{3}\|[0-9]{3}/)[0]
-                                    , a = e[t].getElementsByClassName("quickedit-vn")[0].getAttribute("data-id")
-                                    , r = parseInt(e[t].getElementsByClassName("wood")[0].innerText.replace(".", ""))
-                                    , i = parseInt(e[t].getElementsByClassName("stone")[0].innerText.replace(".", ""))
-                                    , d = parseInt(e[t].getElementsByClassName("iron")[0].innerText.replace(".", ""))
-                                    , c = parseInt(e[t].querySelector("a[href*='market']").innerText.split("/")[0])
-                                    , m = parseInt(e[t].querySelector("a[href*='market']").innerText.split("/")[1])
-                                    , u = parseInt(e[t].children[4].innerText)
-                                    , g = parseInt(e[t].children[2].innerText.replace(".", ""))
-                                    , p = parseInt(e[t].children[6].innerText.split("/")[0]) / parseInt(e[t].children[6].innerText.split("/")[1])
-                                    , h = {
+    return new Promise((e, t) => {
+        let n = game_data.link_base_pure + `overview_villages&mode=prod&group=${groupId}`
+            , o = httpGet(n);
+        const a = (new DOMParser).parseFromString(o, "text/html");
+        let r = [];
+        if ($(a).find(".paged-nav-item").parent().find("select").length > 0)
+            Array.from($(a).find(".paged-nav-item").parent().find("select").find("option")).forEach(function (e) {
+                r.push(e.value)
+            }),
+                r.pop();
+        else if (a.getElementsByClassName("paged-nav-item").length > 0) {
+            let e = 0;
+            Array.from(a.getElementsByClassName("paged-nav-item")).forEach(function (t) {
+                let n = t.href;
+                n = n.split("page=")[0] + "page=" + e,
+                    e++,
+                    r.push(n)
+            })
+        } else
+            r.push(n);
+        r = r.reverse();
+        let s = []
+            , l = new Map;
+        !function n(o) {
+            let a;
+            a = o.length > 0 ? o.pop() : "stop",
+                console.log(a);
+            let i = (new Date).getTime();
+            o.length >= 0 && "stop" != a ? $.ajax({
+                url: a,
+                method: "get",
+                success: e => {
+                    const t = (new DOMParser).parseFromString(e, "text/html");
+                    if ("desktop" == game_data.device) {
+                        let e = Array.from($(t).find(".row_a, .row_b"));
+                        for (let t = 0; t < e.length; t++) {
+                            let n = e[t].getElementsByClassName("quickedit-vn")[0].innerText
+                                , o = e[t].getElementsByClassName("quickedit-vn")[0].innerText.match(/[0-9]{3}\|[0-9]{3}/)[0]
+                                , a = e[t].getElementsByClassName("quickedit-vn")[0].getAttribute("data-id")
+                                , r = parseInt(e[t].getElementsByClassName("wood")[0].innerText.replace(".", ""))
+                                , i = parseInt(e[t].getElementsByClassName("stone")[0].innerText.replace(".", ""))
+                                , d = parseInt(e[t].getElementsByClassName("iron")[0].innerText.replace(".", ""))
+                                , c = parseInt(e[t].querySelector("a[href*='market']").innerText.split("/")[0])
+                                , m = parseInt(e[t].querySelector("a[href*='market']").innerText.split("/")[1])
+                                , u = parseInt(e[t].children[4].innerText)
+                                , g = parseInt(e[t].children[2].innerText.replace(".", ""))
+                                , p = parseInt(e[t].children[6].innerText.split("/")[0]) / parseInt(e[t].children[6].innerText.split("/")[1])
+                                , h = {
                                     coord: o,
                                     id: a,
                                     wood: r,
@@ -58,135 +58,135 @@ function getDataProduction(groupId) {
                                     capacity: u,
                                     points: g
                                 };
-                                s.push(h),
-                                    l.set(o, p)
-                            }
-                        } else {
-                            let e = Array.from($(t).find("#production_table").find(".nowrap"));
-                            for (let t = 0; t < e.length; t++) {
-                                let n = e[t].previousElementSibling.children[0].innerText.trim()
-                                    , o = e[t].previousElementSibling.children[0].innerText.match(/\d+\|\d+/)[0]
-                                    , a = e[t].previousElementSibling.getElementsByClassName("quickedit-vn")[0].getAttribute("data-id")
-                                    , r = parseInt(e[t].getElementsByClassName("mwood")[0].innerText.replace(".", ""))
-                                    , i = parseInt(e[t].getElementsByClassName("mstone")[0].innerText.replace(".", ""))
-                                    , d = parseInt(e[t].getElementsByClassName("miron")[0].innerText.replace(".", ""))
-                                    , c = parseInt(e[t].querySelector("a[href*='market']").innerText)
-                                    , m = 500
-                                    , u = parseInt(e[t].getElementsByClassName("ressources")[0].parentElement.innerText)
-                                    , g = parseInt(e[t].previousElementSibling.children[1].innerText.replace(".", ""))
-                                    , p = parseInt(e[t].getElementsByClassName("population")[0].parentElement.innerText.split("/")[0]) / parseInt(e[t].getElementsByClassName("population")[0].parentElement.innerText.split("/")[1])
-                                    , h = {
-                                    coord: o,
-                                    id: a,
-                                    wood: r,
-                                    stone: i,
-                                    iron: d,
-                                    name: n,
-                                    merchants: c,
-                                    merchants_total: m,
-                                    capacity: u,
-                                    points: g
-                                };
-                                s.push(h),
-                                    l.set(o, p)
-                            }
+                            s.push(h),
+                                l.set(o, p)
                         }
-                        let a = (new Date).getTime() - i;
-                        console.log("wait: " + a),
-                            window.setTimeout(function() {
-                                n(r),
-                                    UI.SuccessMessage("get production page: " + o.length)
-                            }, 200 - a)
+                    } else {
+                        let e = Array.from($(t).find("#production_table").find(".nowrap"));
+                        for (let t = 0; t < e.length; t++) {
+                            let n = e[t].previousElementSibling.children[0].innerText.trim()
+                                , o = e[t].previousElementSibling.children[0].innerText.match(/\d+\|\d+/)[0]
+                                , a = e[t].previousElementSibling.getElementsByClassName("quickedit-vn")[0].getAttribute("data-id")
+                                , r = parseInt(e[t].getElementsByClassName("mwood")[0].innerText.replace(".", ""))
+                                , i = parseInt(e[t].getElementsByClassName("mstone")[0].innerText.replace(".", ""))
+                                , d = parseInt(e[t].getElementsByClassName("miron")[0].innerText.replace(".", ""))
+                                , c = parseInt(e[t].querySelector("a[href*='market']").innerText)
+                                , m = 500
+                                , u = parseInt(e[t].getElementsByClassName("ressources")[0].parentElement.innerText)
+                                , g = parseInt(e[t].previousElementSibling.children[1].innerText.replace(".", ""))
+                                , p = parseInt(e[t].getElementsByClassName("population")[0].parentElement.innerText.split("/")[0]) / parseInt(e[t].getElementsByClassName("population")[0].parentElement.innerText.split("/")[1])
+                                , h = {
+                                    coord: o,
+                                    id: a,
+                                    wood: r,
+                                    stone: i,
+                                    iron: d,
+                                    name: n,
+                                    merchants: c,
+                                    merchants_total: m,
+                                    capacity: u,
+                                    points: g
+                                };
+                            s.push(h),
+                                l.set(o, p)
+                        }
                     }
-                    ,
-                    error: e=>{
-                        t(e)
-                    }
-                }) : (console.log("list_production: herererre", s),
-                    UI.SuccessMessage("done"),
-                    e({
-                        list_production: s,
-                        map_farm_usage: l
-                    }))
-            }(r)
-        }
+                    let a = (new Date).getTime() - i;
+                    console.log("wait: " + a),
+                        window.setTimeout(function () {
+                            n(r),
+                                UI.SuccessMessage("get production page: " + o.length)
+                        }, 200 - a)
+                }
+                ,
+                error: e => {
+                    t(e)
+                }
+            }) : (console.log("list_production: herererre", s),
+                UI.SuccessMessage("done"),
+                e({
+                    list_production: s,
+                    map_farm_usage: l
+                }))
+        }(r)
+    }
     )
 }
 function getDataIncoming(groupId) {
-    return new Promise((e,t)=>{
-            let n = game_data.link_base_pure + `overview_villages&mode=trader&type=all&group=${groupId}`
-                , o = httpGet(n);
-            const a = (new DOMParser).parseFromString(o, "text/html");
-            let r = [];
-            if ($(a).find(".paged-nav-item").parent().find("select").length > 0)
-                Array.from($(a).find(".paged-nav-item").parent().find("select").find("option")).forEach(function(e) {
-                    r.push(e.value)
-                }),
-                    r.pop();
-            else if (a.getElementsByClassName("paged-nav-item").length > 0) {
-                let e = 0;
-                Array.from(a.getElementsByClassName("paged-nav-item")).forEach(function(t) {
-                    let n = t.href;
-                    n = n.split("page=")[0] + "page=" + e,
-                        e++,
-                        r.push(n)
-                })
-            } else
-                r.push(n);
-            r = r.reverse();
-            let s = new Map;
-            !function n(o) {
-                let a;
-                a = o.length > 0 ? o.pop() : "stop",
-                    console.log(a);
-                let l = (new Date).getTime();
-                o.length >= 0 && "stop" != a ? $.ajax({
-                    url: a,
-                    method: "get",
-                    success: e=>{
-                        const t = (new DOMParser).parseFromString(e, "text/html");
-                        let a = Array.from($(t).find(".row_a, .row_b"));
-                        for (let e = 0; e < a.length; e++) {
-                            let t = "";
-                            t = "desktop" == game_data.device ? extractSingleCoord(a[e].children[5].innerText,0) : extractSingleCoord(a[e].children[3].innerText,1);
-                            so = "desktop" == game_data.device ? extractSingleCoord(a[e].children[3].innerText,0) : extractSingleCoord(a[e].children[2].innerText,1);
-                            me = "desktop" == game_data.device ? parseInt(a[e].children[7].innerText) : parseInt(a[e].children[5].innerText);
-                            let n = parseInt($(a[e]).find(".wood").parent().text().replace(".", ""))
-                                , o = parseInt($(a[e]).find(".stone").parent().text().replace(".", ""))
-                                , r = parseInt($(a[e]).find(".iron").parent().text().replace(".", ""))
-                                , l = { // stored by destination coord
+    return new Promise((e, t) => {
+        let n = game_data.link_base_pure + `overview_villages&mode=trader&type=all&group=${groupId}`
+            , o = httpGet(n);
+        const a = (new DOMParser).parseFromString(o, "text/html");
+        let r = [];
+        if ($(a).find(".paged-nav-item").parent().find("select").length > 0)
+            Array.from($(a).find(".paged-nav-item").parent().find("select").find("option")).forEach(function (e) {
+                r.push(e.value)
+            }),
+                r.pop();
+        else if (a.getElementsByClassName("paged-nav-item").length > 0) {
+            let e = 0;
+            Array.from(a.getElementsByClassName("paged-nav-item")).forEach(function (t) {
+                let n = t.href;
+                n = n.split("page=")[0] + "page=" + e,
+                    e++,
+                    r.push(n)
+            })
+        } else
+            r.push(n);
+        r = r.reverse();
+        let s = new Map;
+        !function n(o) {
+            let a;
+            a = o.length > 0 ? o.pop() : "stop",
+                console.log(a);
+            let l = (new Date).getTime();
+            o.length >= 0 && "stop" != a ? $.ajax({
+                url: a,
+                method: "get",
+                success: e => {
+                    const t = (new DOMParser).parseFromString(e, "text/html");
+                    let a = Array.from($(t).find(".row_a, .row_b"));
+                    for (let e = 0; e < a.length; e++) {
+                        let t = "";
+                        t = "desktop" == game_data.device ? extractSingleCoord(a[e].children[5].innerText, 0) : extractSingleCoord(a[e].children[3].innerText, 1);
+                        so = "desktop" == game_data.device ? extractSingleCoord(a[e].children[3].innerText, 0) : extractSingleCoord(a[e].children[2].innerText, 1);
+                        me = "desktop" == game_data.device ? parseInt(a[e].children[7].innerText) : parseInt(a[e].children[5].innerText);
+                        let n = parseInt($(a[e]).find(".wood").parent().text().replace(".", ""))
+                            , o = parseInt($(a[e]).find(".stone").parent().text().replace(".", ""))
+                            , r = parseInt($(a[e]).find(".iron").parent().text().replace(".", ""))
+                            , l = { // stored by destination coord
                                 scoord: so,
                                 wood: n = 1 == Number.isNaN(n) ? 0 : n,
                                 stone: o = 1 == Number.isNaN(o) ? 0 : o,
                                 iron: r = 1 == Number.isNaN(r) ? 0 : r,
                                 merchants: me,
                             };
-                            if (s.has(t)) {
-                                let e = s.get(t);
-                                e.push(l);
-                                s.set(t, e);
-                            } else {
-                                s.set(t, []);
-                                let e = s.get(t);
-                                e.push(l);
-                                s.set(t, e);
-                            }
+                        if (s.has(t)) {
+                            let e = s.get(t);
+                            e.push(l);
+                            s.set(t, e);
+                        } else {
+                            s.set(t, []);
+                            let e = s.get(t);
+                            e.push(l);
+                            s.set(t, e);
                         }
-                        let i = (new Date).getTime() - l;
-                        console.log("wait: " + i),
-                            window.setTimeout(function() {
-                                n(r),
-                                    UI.SuccessMessage("get incoming page: " + o.length)
-                            }, 200 - i)
                     }
-                    ,
-                    error: e=>{
-                        t(e)
-                    }
-                }) : (UI.SuccessMessage("done"),
-                    e(s))
-            }(r)
-        }
+                    let i = (new Date).getTime() - l;
+                    console.log("wait: " + i),
+                        window.setTimeout(function () {
+                            n(r),
+                                UI.SuccessMessage("get incoming page: " + o.length)
+                        }, 200 - i)
+                }
+                ,
+                error: e => {
+                    t(e)
+                }
+            }) : (UI.SuccessMessage("done"),
+                e(s))
+        }(r)
+    }
     )
 }
 function httpGet(e) {
@@ -195,10 +195,10 @@ function httpGet(e) {
         t.send(null),
         t.responseText
 }
-function extractSingleCoord(text,n){
-    try{
+function extractSingleCoord(text, n) {
+    try {
         return text.match(/[0-9]{3}\|[0-9]{3}/)[n]
-    }catch(e){
+    } catch (e) {
         return text;
     }
 }
@@ -211,15 +211,15 @@ var tradersSendingFrequency = 20;
 
 // Function to calculate the distance between two coordinates
 function calculateDistance(coord1, coord2) {
-    const [x1,y1] = coord1.split('|').map(Number);
-    const [x2,y2] = coord2.split('|').map(Number);
+    const [x1, y1] = coord1.split('|').map(Number);
+    const [x2, y2] = coord2.split('|').map(Number);
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }
 
 // Function to Calculate the average planned throughput
-function averagePlannedThroughput(villagesData,allRoutes) {
-    calcPlannedResPerH(villagesData,allRoutes)
-    const sumThroughputValues = villagesData.reduce((sum,village)=>sum + village.acutalResPErH, 0);
+function averagePlannedThroughput(villagesData, allRoutes) {
+    calcPlannedResPerH(villagesData, allRoutes)
+    const sumThroughputValues = villagesData.reduce((sum, village) => sum + village.acutalResPErH, 0);
     //console.log("Average Throughput to per Hour: " + Math.round(averageThroughput));
     return sumThroughputValues / villagesData.length - 1;
 }
@@ -230,78 +230,78 @@ function calculateAverageThroughputPerHourPerTrader(distance) {
     return Math.floor(60 / timeRequired * 1000);
 }
 
-function calcPlannedResPerH(villages,allRoutes) {
-    villages.forEach(village=>{
-            const resPH = village.routes.reduce((sum,route)=>sum + route.merchants * route.resPerH, 0);
-            village.plannedResPerH = resPH
-            village.acutalResPErH = village.plannedResPerH - village.receivedResPerH;
-            allRoutes.filter(r=>r.destination == village.id).forEach(r=>r.destinationResPerH = village.acutalResPErH)
-        }
+function calcPlannedResPerH(villages, allRoutes) {
+    villages.forEach(village => {
+        const resPH = village.routes.reduce((sum, route) => sum + route.merchants * route.resPerH, 0);
+        village.plannedResPerH = resPH
+        village.acutalResPErH = village.plannedResPerH - village.receivedResPerH;
+        allRoutes.filter(r => r.destination == village.id).forEach(r => r.destinationResPerH = village.acutalResPErH)
+    }
     );
 }
 
 // Function to generate all possible routes from one village to another
-function generateRoutes(villages,centralVillage) {
+function generateRoutes(villages, centralVillage) {
     const routes = [];
 
-    villages.forEach(sourceVillage=>{
-            // Initialize if not present
-            // Initialize an empty array for routes from this village
-            sourceVillage.routes = [];
-            // Add resPerH to destination village as receivedResPerH
-            sourceVillage.receivedResPerH = 0;
-            sourceVillage.plannedResPerH = 0;
-            sourceVillage.acutalResPErH = 0;
-            sourceVillage.improvementPossible = true;
-            //sourceVillage.merchants = 235;
-            //for testing
-            villages.forEach(destinationVillage=>{
-                    // Check if the destination is closer than the source
-                    let route;
-                    if (sourceVillage.distanceToCentral > destinationVillage.distanceToCentral) {
-                        const sDistance = calculateDistance(sourceVillage.coord, destinationVillage.coord);
-                        const cDistance = calculateDistance(destinationVillage.coord, centralVillage.coord);
-                        const resPH = calculateAverageThroughputPerHourPerTrader(sDistance);
+    villages.forEach(sourceVillage => {
+        // Initialize if not present
+        // Initialize an empty array for routes from this village
+        sourceVillage.routes = [];
+        // Add resPerH to destination village as receivedResPerH
+        sourceVillage.receivedResPerH = 0;
+        sourceVillage.plannedResPerH = 0;
+        sourceVillage.acutalResPErH = 0;
+        sourceVillage.improvementPossible = true;
+        //sourceVillage.merchants = 235;
+        //for testing
+        villages.forEach(destinationVillage => {
+            // Check if the destination is closer than the source
+            let route;
+            if (sourceVillage.distanceToCentral > destinationVillage.distanceToCentral) {
+                const sDistance = calculateDistance(sourceVillage.coord, destinationVillage.coord);
+                const cDistance = calculateDistance(destinationVillage.coord, centralVillage.coord);
+                const resPH = calculateAverageThroughputPerHourPerTrader(sDistance);
 
-                        // Create a route object
-                        route = {
-                            source: sourceVillage.id,
-                            destination: destinationVillage.id,
-                            sDistance: sDistance,
-                            // Rename distance to sDistance
-                            cDistance: cDistance,
-                            resPerH: resPH,
-                            merchants: 0,
-                            distance: sDistance,
-                            // Initialize plannedTraders
-                            destinationResPerH: 0,
-                            dcoord: destinationVillage.coord,
-                            scoord: sourceVillage.coord,
-                            launchMerchants: 0,
-                        };
+                // Create a route object
+                route = {
+                    source: sourceVillage.id,
+                    destination: destinationVillage.id,
+                    sDistance: sDistance,
+                    // Rename distance to sDistance
+                    cDistance: cDistance,
+                    resPerH: resPH,
+                    merchants: 0,
+                    distance: sDistance,
+                    // Initialize plannedTraders
+                    destinationResPerH: 0,
+                    dcoord: destinationVillage.coord,
+                    scoord: sourceVillage.coord,
+                    launchMerchants: 0,
+                };
 
-                        // Add route to the routes list of the source village
-                        sourceVillage.routes.push(route);
+                // Add route to the routes list of the source village
+                sourceVillage.routes.push(route);
 
-                        // Push the route to the global routes array
-                        routes.push(route);
-                        // Add the resPerH of the direct route to the village as originalResPerH, also allocate all initial traders
-                        if (route.destination === centralVillage.id) {
-                            sourceVillage.directRoute = route;
-                            sourceVillage.originalResPerH = route.resPerH;
-                            route.merchants = sourceVillage.merchants;
-                        }
-                    }
+                // Push the route to the global routes array
+                routes.push(route);
+                // Add the resPerH of the direct route to the village as originalResPerH, also allocate all initial traders
+                if (route.destination === centralVillage.id) {
+                    sourceVillage.directRoute = route;
+                    sourceVillage.originalResPerH = route.resPerH;
+                    route.merchants = sourceVillage.merchants;
                 }
-            );
-
+            }
         }
+        );
+
+    }
     );
 
     return routes;
 }
 
-function allocateTraders(villages,centralVillage,allRoutes) {
+function allocateTraders(villages, centralVillage, allRoutes) {
     centralVillage.improvementPossible = false;
     const maxIterations = 1000;
     // You can adjust this based on your needs
@@ -311,11 +311,11 @@ function allocateTraders(villages,centralVillage,allRoutes) {
     while (improvementPossible && iteration < maxIterations) {
         console.log("Iteration " + (iteration + 1));
         // Calculate average throughput
-        const averageThroughput = averagePlannedThroughput(villages,allRoutes);
-        let slowVillages = villages.filter((village)=>{
-                return village.id !== centralVillage.id && village.acutalResPErH < averageThroughput && village.directRoute.merchants > 0 && village.improvementPossible == true;
-            }
-        ).sort((a,b)=>a.acutalResPErH - b.acutalResPErH);
+        const averageThroughput = averagePlannedThroughput(villages, allRoutes);
+        let slowVillages = villages.filter((village) => {
+            return village.id !== centralVillage.id && village.acutalResPErH < averageThroughput && village.directRoute.merchants > 0 && village.improvementPossible == true;
+        }
+        ).sort((a, b) => a.acutalResPErH - b.acutalResPErH);
         let nextSlowestResPerH = averageThroughput;
         if (slowVillages.length == 0) {
             improvementPossible = false;
@@ -326,14 +326,14 @@ function allocateTraders(villages,centralVillage,allRoutes) {
         // Filter routes with a destination village that has a better acutalResPErH and sort it by that value
         let slowVillage = slowVillages[0];
         console.log("Slowest = " + Math.abs(slowVillage.acutalResPErH) + " -next-> " + Math.abs(nextSlowestResPerH));
-        let betterRoutes = slowVillage.routes.filter(route=>route.destination !== centralVillage.id && route.destinationResPerH > averageThroughput && route.resPerH > slowVillage.originalResPerH).sort((r1,r2)=>{
-                return r1.sDistance + r1.cDistance - r2.sDistance - r2.cDistance;
-            }
+        let betterRoutes = slowVillage.routes.filter(route => route.destination !== centralVillage.id && route.destinationResPerH > averageThroughput && route.resPerH > slowVillage.originalResPerH).sort((r1, r2) => {
+            return r1.sDistance + r1.cDistance - r2.sDistance - r2.cDistance;
+        }
         )
         if (betterRoutes.length) {
             let firstBestRoute = betterRoutes[0];
             let toleranceDistance = Math.ceil((firstBestRoute.sDistance + firstBestRoute.cDistance) * 10) / 10 + 2
-            firstBestRoute = betterRoutes.filter(r=>r.sDistance + r.cDistance <= toleranceDistance).sort((r1,r2)=>r2.resPerH - r1.resPerH)[0];
+            firstBestRoute = betterRoutes.filter(r => r.sDistance + r.cDistance <= toleranceDistance).sort((r1, r2) => r2.resPerH - r1.resPerH)[0];
             let amountTraders = Math.ceil((nextSlowestResPerH - slowVillage.acutalResPErH) / slowVillage.resPerHToCentral);
             amountTraders = amountTraders == 0 ? 5 : amountTraders;
             let improvement = Math.abs(firstBestRoute.resPerH * amountTraders - amountTraders * slowVillage.originalResPerH);
@@ -344,7 +344,7 @@ function allocateTraders(villages,centralVillage,allRoutes) {
             amountTraders = Math.min(amountTraders, slowVillage.directRoute.merchants);
             slowVillage.directRoute.merchants -= amountTraders;
             firstBestRoute.merchants += amountTraders;
-            villages.filter(v=>v.id == firstBestRoute.destination).forEach(v=>v.receivedResPerH += amountTraders * firstBestRoute.resPerH);
+            villages.filter(v => v.id == firstBestRoute.destination).forEach(v => v.receivedResPerH += amountTraders * firstBestRoute.resPerH);
         } else {
             slowVillage.improvementPossible = false
         }
@@ -354,7 +354,7 @@ function allocateTraders(villages,centralVillage,allRoutes) {
     ;
 }
 
-async function start(middleVillage,group) {
+async function start(middleVillage, group) {
 
     let centralCoordinates = null;
     let villagesData = []
@@ -363,26 +363,26 @@ async function start(middleVillage,group) {
     let allRoutes = [];
 
     centralCoordinates = middleVillage.trim();
-    let {list_production: r, map_farm_usage: s} = await getDataProduction(group.id).catch(e=>alert(e));
-    let l = await getDataIncoming(group.id).catch(e=>alert(e))
+    let { list_production: r, map_farm_usage: s } = await getDataProduction(group.id).catch(e => alert(e));
+    let l = await getDataIncoming(group.id).catch(e => alert(e))
     villagesData = r;
     transportData = l;
-        console.log("list_production", r),
+    console.log("list_production", r),
         console.log("map_farm_usage", s),
         console.log("map_incoming", l),
-        centralVillage = villagesData.filter(v=>v.coord == centralCoordinates)[0];
+        centralVillage = villagesData.filter(v => v.coord == centralCoordinates)[0];
 
     // Add resPerH to central village and plannedTrader to each village's data structure
-    villagesData.forEach(village=>{
-            village.distanceToCentral = calculateDistance(village.coord, centralCoordinates);
-            village.resPerHToCentral = calculateAverageThroughputPerHourPerTrader(village.distanceToCentral);
-        }
+    villagesData.forEach(village => {
+        village.distanceToCentral = calculateDistance(village.coord, centralCoordinates);
+        village.resPerHToCentral = calculateAverageThroughputPerHourPerTrader(village.distanceToCentral);
+    }
     );
 
 
-    allRoutes = await calc(allRoutes,centralVillage,villagesData);
-    drawRoutes(allRoutes,centralVillage,villagesData);
-    let e = generateLaunchList(villagesData,allRoutes,transportData)
+    allRoutes = await calc(allRoutes, centralVillage, villagesData);
+    drawRoutes(allRoutes, centralVillage, villagesData);
+    let e = generateLaunchList(villagesData, allRoutes, transportData)
     await createTable(e, null, villagesData, null)
 }
 
@@ -391,37 +391,37 @@ async function start(middleVillage,group) {
 let beforeMap = new Map;
 let afterMap = new Map;
 
-async function calc(allRoutes,centralVillage,villagesData) {
+async function calc(allRoutes, centralVillage, villagesData) {
     // Generate all possible routes
-    allRoutes = generateRoutes(villagesData,centralVillage);
+    allRoutes = generateRoutes(villagesData, centralVillage);
 
-    const before = averagePlannedThroughput(villagesData,allRoutes);
-    villagesData.forEach(village=>{
-            beforeMap.set(village.coord, village.plannedResPerH);
-        }
+    const before = averagePlannedThroughput(villagesData, allRoutes);
+    villagesData.forEach(village => {
+        beforeMap.set(village.coord, village.plannedResPerH);
+    }
     );
 
     // Call the function to allocate traders
-    allocateTraders(villagesData,centralVillage,allRoutes);
+    allocateTraders(villagesData, centralVillage, allRoutes);
 
-    const after = averagePlannedThroughput(villagesData,allRoutes);
-    villagesData.forEach(village=>{
-            afterMap.set(village.coord, village.acutalResPErH);
-        }
+    const after = averagePlannedThroughput(villagesData, allRoutes);
+    villagesData.forEach(village => {
+        afterMap.set(village.coord, village.acutalResPErH);
+    }
     );
 
-    villagesData.sort((a,b)=>(a.acutalResPErH) - (b.acutalResPErH)).forEach(v=>console.log(afterMap.get(v.coord) + " <-- " + beforeMap.get(v.coord) + " = " + (afterMap.get(v.coord) - beforeMap.get(v.coord)) + " | " + v.distanceToCentral));
+    villagesData.sort((a, b) => (a.acutalResPErH) - (b.acutalResPErH)).forEach(v => console.log(afterMap.get(v.coord) + " <-- " + beforeMap.get(v.coord) + " = " + (afterMap.get(v.coord) - beforeMap.get(v.coord)) + " | " + v.distanceToCentral));
 
     console.log(villagesData);
-    console.log(allRoutes.filter(r=>r.merchants > 0));
+    console.log(allRoutes.filter(r => r.merchants > 0));
 
     console.log("Average thourghput Before: " + before);
     console.log("Max:", Math.max(...beforeMap.values()));
-    console.log("Min:", Math.min(...(new Map([...beforeMap].filter(([k, v]) => v > 0 ))).values()));
+    console.log("Min:", Math.min(...(new Map([...beforeMap].filter(([k, v]) => v > 0))).values()));
 
     console.log("Average thourghput After: " + after);
     console.log("Max:", Math.max(...afterMap.values()));
-    console.log("Min:", Math.min(...(new Map([...afterMap].filter(([k, v]) => v > 0 ))).values()));
+    console.log("Min:", Math.min(...(new Map([...afterMap].filter(([k, v]) => v > 0))).values()));
     return allRoutes;
 }
 
@@ -450,17 +450,17 @@ function shadeColor(color, percent) {
     return "#" + RR + GG + BB;
 }
 
-const RGB_Linear_Shade=(p,c)=>{
-    var i=parseInt,r=Math.round,[a,b,c,d]=c.split(","),P=p<0,t=P?0:255*p,P=P?1+p:1-p;
-    return"rgb"+(d?"a(":"(")+r(i(a[3]=="a"?a.slice(5):a.slice(4))*P+t)+","+r(i(b)*P+t)+","+r(i(c)*P+t)+(d?","+d:")");
+const RGB_Linear_Shade = (p, c) => {
+    var i = parseInt, r = Math.round, [a, b, c, d] = c.split(","), P = p < 0, t = P ? 0 : 255 * p, P = P ? 1 + p : 1 - p;
+    return "rgb" + (d ? "a(" : "(") + r(i(a[3] == "a" ? a.slice(5) : a.slice(4)) * P + t) + "," + r(i(b) * P + t) + "," + r(i(c) * P + t) + (d ? "," + d : ")");
 }
 
 function RGB_Linear_Blend(p, c0, c1) {
     var i = parseInt
         , r = Math.round
         , P = 1 - p
-        , [a,b,c,d] = c0.split(",")
-        , [e,f,g,h] = c1.split(",")
+        , [a, b, c, d] = c0.split(",")
+        , [e, f, g, h] = c1.split(",")
         , x = d || h
         , j = x ? "," + (!d ? h : !h ? d : r((parseFloat(d) * P + parseFloat(h) * p) * 1000) / 1000 + ")") : ")";
     return "rgb" + (x ? "a(" : "(") + r(i(a[3] == "a" ? a.slice(5) : a.slice(4)) * P + i(e[3] == "a" ? e.slice(5) : e.slice(4)) * p) + "," + r(i(b) * P + i(f) * p) + "," + r(i(c) * P + i(g) * p) + j;
@@ -470,33 +470,33 @@ var textColor = "#ffffff"
 if ("undefined" != typeof TWMap)
     var ogSpawnSector = TWMap.mapHandler.spawnSector;
 
-function drawRoutes(routes,centralVillage,villagesData) {
-    routes = routes.filter(r=>r.merchants > 0);
-    $.getScript("https://shinko-to-kuma.com/scripts/mapSdk.js").done(function() {
-        routes.forEach(r=>{
-                let color = r.destination != centralVillage.id ? '#FF0000' : '#00FF00'
-                console.log('draw')
-                const [sx,sy] = r.scoord.split('|');
-                const [dx,dy] = r.dcoord.split('|');
-                MapSdk.lines.push({
-                    x1: sx,
-                    y1: sy,
-                    x2: dx,
-                    y2: dy,
-                    styling: {
-                        main: {
-                            "strokeStyle": color,
-                            "lineWidth": 2
-                        },
-                        mini: {
-                            "strokeStyle": color,
-                            "lineWidth": 2
-                        }
+function drawRoutes(routes, centralVillage, villagesData) {
+    routes = routes.filter(r => r.merchants > 0);
+    $.getScript("https://shinko-to-kuma.com/scripts/mapSdk.js").done(function () {
+        routes.forEach(r => {
+            let color = r.destination != centralVillage.id ? '#FF0000' : '#00FF00'
+            console.log('draw')
+            const [sx, sy] = r.scoord.split('|');
+            const [dx, dy] = r.dcoord.split('|');
+            MapSdk.lines.push({
+                x1: sx,
+                y1: sy,
+                x2: dx,
+                y2: dy,
+                styling: {
+                    main: {
+                        "strokeStyle": color,
+                        "lineWidth": 2
                     },
-                    drawOnMini: true,
-                    drawOnMap: true,
-                });
-            }
+                    mini: {
+                        "strokeStyle": color,
+                        "lineWidth": 2
+                    }
+                },
+                drawOnMini: true,
+                drawOnMap: true,
+            });
+        }
         );
         MapSdk.mapOverlay.reload();
         if ("undefined" != typeof TWMap)
@@ -514,66 +514,66 @@ function drawRoutes(routes,centralVillage,villagesData) {
 }
 
 function addInfoOnMap(villages) {
-    let actualRess= villages.map((i)=>i.acutalResPErH).filter(v=>v > 0);
+    let actualRess = villages.map((i) => i.acutalResPErH).filter(v => v > 0);
     const max = Math.max(...actualRess);
     const min = Math.min(...actualRess);
     //const average = actualRess.reduce((pv, cv) => pv + cv, 0)/actualRess.length;
-    const average = actualRess[actualRess.length/2];
+    const average = actualRess[actualRess.length / 2];
 
     let e = new Map;
-    villages.forEach(village=>{
-            e.set(village.id + "", {
-                label_cluster: 0,
-                villageId: village.id + "",
-                total_resources_get: village.plannedResPerH,
-                total_resources_send: village.receivedResPerH,
-                p: village.acutalResPErH<=average?0.8:0.2,
-            });
-        }
+    villages.forEach(village => {
+        e.set(village.id + "", {
+            label_cluster: 0,
+            villageId: village.id + "",
+            total_resources_get: village.plannedResPerH,
+            total_resources_send: village.receivedResPerH,
+            p: village.acutalResPErH <= average ? 0.8 : 0.2,
+        });
+    }
     )
     let n = !0;
-    TWMap.mapHandler.spawnSector = function(o, a) {
+    TWMap.mapHandler.spawnSector = function (o, a) {
         ogSpawnSector.call(TWMap.mapHandler, o, a),
             console.log("spawn area map"),
-        1 == n && (n = !1,
-            window.setTimeout(()=>{
+            1 == n && (n = !1,
+                window.setTimeout(() => {
                     let o = TWMap.map._visibleSectors;
-                    Object.keys(o).forEach(n=>{
-                            let a = o[n]._elements;
-                            Object.keys(a).forEach(n=>{
-                                    let o = a[n].id.match(/\d+/);
-                                    if (null != o && e.has(o[0])) {
-                                        let n = e.get(o[0]);
-                                        createMapInfo(n)
-                                    }
-                                }
-                            )
+                    Object.keys(o).forEach(n => {
+                        let a = o[n]._elements;
+                        Object.keys(a).forEach(n => {
+                            let o = a[n].id.match(/\d+/);
+                            if (null != o && e.has(o[0])) {
+                                let n = e.get(o[0]);
+                                createMapInfo(n)
+                            }
                         }
+                        )
+                    }
                     ),
                         n = !0
                 }
-                , 50))
+                    , 50))
     }
 }
 
 function createMapInfo(e) {
     try {
         if (console.log("smartDraw"),
-        null == document.getElementById(`info_extra${e.villageId}`)) {
+            null == document.getElementById(`info_extra${e.villageId}`)) {
             let n = "#00FF00"
                 , o = "#FF0000"
                 , a = document.getElementById(`map_village_${e.villageId}`)
                 , r = document.getElementById(`map_village_${e.villageId}`).parentElement
                 , s = a.style.left
                 , l = a.style.top;
-            for (; null != document.getElementById(`map_icons_${e.villageId}`); )
+            for (; null != document.getElementById(`map_icons_${e.villageId}`);)
                 document.getElementById(`map_icons_${e.villageId}`).remove();
             null != document.getElementById(`map_cmdicons_${e.villageId}_0`) && document.getElementById(`map_cmdicons_${e.villageId}_0`).remove(),
-            null != document.getElementById(`map_cmdicons_${e.villageId}_1`) && document.getElementById(`map_cmdicons_${e.villageId}_1`).remove();
+                null != document.getElementById(`map_cmdicons_${e.villageId}_1`) && document.getElementById(`map_cmdicons_${e.villageId}_1`).remove();
             let i = `\n                <div class="border_info" id="info_extra${e.villageId}" style="position:absolute;left:${s};top:${l};width:51px;height:36px;z-index:10; ${`background-color:${RGB_Linear_Shade(e.p, 'rgba(0,18,160,0.7)')};outline:${RGB_Linear_Shade(e.p, 'rgb(0,18,160)')} solid 2px`}"></div>\n                <center><font color="${textColor}"  class="shadow20" style="position:absolute;left:${s};top:${l};width:14px;height:14px;z-index:11;margin-left:0px;; font-size: 12px">nr:${e.label_cluster} </font></center>\n                <center><font color="${n}"  class="shadow20" style="position:absolute;left:${s};top:${l};width:14px;height:14px;z-index:11;margin-left:0px;margin-top:11px; font-size: 12px">${parseInt(e.total_resources_get / 1e3)}k </font></center>\n                <center><font color="${o}"  class="shadow20" style="position:absolute;left:${s};top:${l};width:14px;height:14px;z-index:11;margin-left:0px;margin-top:23px; font-size: 12px">${parseInt(e.total_resources_send / 1e3)}k </font></center>\n                `;
             $(i).appendTo(r)
         }
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function getRandomColor(e) {
@@ -590,34 +590,34 @@ function getRandomColor(e) {
     }
 }
 
-function generateLaunchList(villagesData,routes,transport){
+function generateLaunchList(villagesData, routes, transport) {
     let x = []; // single trades
-    villagesData.forEach((village)=>{
+    villagesData.forEach((village) => {
         // get min distribution multiplier
         let max = village.merchants;
-        let res = [village.wood,village.stone,village.iron];
-        let res_multiplier = res.map((x,i)=>parseInt(x / [28, 30, 25][i]));
-        res_multiplier.push(parseInt(max*1000 / 83));
+        let res = [village.wood, village.stone, village.iron];
+        let res_multiplier = res.map((x, i) => parseInt(x / [28, 30, 25][i]));
+        res_multiplier.push(parseInt(max * 1000 / 83));
         let multiplier = Math.min(...res_multiplier);
         //filter best routes first.
-        village.routes = village.routes.filter(r=>r.merchants>0).sort((r1,r2)=>r2.resPerH-r1.resPerH);
-        village.routes.forEach(route=>{
-            let ttoD =transport.get(route.dcoord);
-            let ttoS =transport.get(route.scoord);
-            let ttod = typeof ttoD != 'undefined'?ttoD.filter(t=>t.scoord==route.scoord).reduce((sum,mer)=>{return sum+(typeof mer!='undefined'?mer:0)},0):0;
-            let ttos = typeof ttoS != 'undefined'?ttoS.filter(t=>t.scoord==route.dcoord).reduce((sum,mer)=>{return sum+(typeof mer!='undefined'?mer:0)},0):0;
-            let freeMerchants=route.merchants-ttod-ttos;
-            if(freeMerchants>0&&multiplier>11){
-                let rMulti = parseInt(freeMerchants*1000 / 83)
-                rMulti = Math.min(multiplier,rMulti)
+        village.routes = village.routes.filter(r => r.merchants > 0).sort((r1, r2) => r2.resPerH - r1.resPerH);
+        village.routes.forEach(route => {
+            let ttoD = transport.get(route.dcoord);
+            let ttoS = transport.get(route.scoord);
+            let ttod = typeof ttoD != 'undefined' ? ttoD.filter(t => t.scoord == route.scoord).reduce((sum, mer) => { return sum + (typeof mer != 'undefined' ? mer : 0) }, 0) : 0;
+            let ttos = typeof ttoS != 'undefined' ? ttoS.filter(t => t.scoord == route.dcoord).reduce((sum, mer) => { return sum + (typeof mer != 'undefined' ? mer : 0) }, 0) : 0;
+            let freeMerchants = route.merchants - ttod - ttos;
+            if (freeMerchants > 0 && multiplier > 11) {
+                let rMulti = parseInt(freeMerchants * 1000 / 83)
+                rMulti = Math.min(multiplier, rMulti)
                 while (rMulti * 83 % 1000 < 900 && rMulti > 0) {
                     rMulti--;
                 }
-                let [c,m,u] = [28, 30, 25].map(x=>x * rMulti);
-                multiplier-=rMulti;
-                route.merchants-=freeMerchants
+                let [c, m, u] = [28, 30, 25].map(x => x * rMulti);
+                multiplier -= rMulti;
+                route.merchants -= freeMerchants
                 x.push({
-                    total_send: c+m+u,
+                    total_send: c + m + u,
                     wood: c,
                     stone: m,
                     iron: u,
@@ -668,8 +668,8 @@ function generateLaunchList(villagesData,routes,transport){
                     distance: x[e].distance
                 });
     }
-    let D = Array.from(A.entries()).map(e=>e[1]);
-    D.sort((e,t)=>e.total_send > t.total_send ? -1 : e.total_send < t.total_send ? 1 : 0),
+    let D = Array.from(A.entries()).map(e => e[1]);
+    D.sort((e, t) => e.total_send > t.total_send ? -1 : e.total_send < t.total_send ? 1 : 0),
         console.log("list_launches_mass", D);
     return D;
 }
@@ -800,20 +800,20 @@ function createMainInterface() {
     if ($("#div_container").remove(),
         $("#contentContainer").eq(0).prepend(e),
         $("#mobileContent").eq(0).prepend(e),
-    "desktop" != game_data.device && $("#div_body").css("height", "500px"),
+        "desktop" != game_data.device && $("#div_body").css("height", "500px"),
         $("#div_container").css("position", "fixed"),
         $("#div_container").draggable(),
-    "pt_PT" == game_data.locale && $("#tr_merchant_capacity").show(),
+        "pt_PT" == game_data.locale && $("#tr_merchant_capacity").show(),
         $("#div_minimize").on("click", () => {
             Math.ceil($("#div_container").width() / $("body").width() * 100) >= widthInterface ? ($("#div_container").css({
                 width: "10%"
             }),
                 $("#div_body").hide()) : ($("#div_container").css({
-                width: `${widthInterface}%`
-            }),
-                $("#div_body").show())
+                    width: `${widthInterface}%`
+                }),
+                    $("#div_body").show())
         }),
-    null != localStorage.getItem(game_data.world + "settings_optiMint")) {
+        null != localStorage.getItem(game_data.world + "settings_optiMint")) {
         let e = JSON.parse(localStorage.getItem(game_data.world + "settings_optiMint"));
         $("#div_container input[type=number],#div_container input[type=string]").each(function (t, n) {
             this.value = e[t]
@@ -830,7 +830,7 @@ function createMainInterface() {
             n = localStorage.getItem(game_data.world + "settings_optiMint");
         console.log(t),
             console.log(n),
-        t != n && localStorage.setItem(game_data.world + "settings_optiMint", t)
+            t != n && localStorage.setItem(game_data.world + "settings_optiMint", t)
     })
 }
 
@@ -864,7 +864,7 @@ function changeTheme() {
             for (let e = 0; e < n.length - 1; e++)
                 if (null == n[e].match(/#[0-9 A-F]{6}/))
                     throw UI.ErrorMessage("wrong colour: " + n[e]),
-                        new Error("wrong colour");
+                    new Error("wrong colour");
             null != localStorage.getItem(localStorageThemeName) && (o = new Map(JSON.parse(localStorage.getItem(localStorageThemeName)))),
                 o.set(t, n),
                 o.set("currentTheme", t),
@@ -879,7 +879,7 @@ function changeTheme() {
         $("#input_slider_width").on("input", () => {
             $("#td_width").text($("#input_slider_width").val() + "%")
         }),
-    null != localStorage.getItem(localStorageThemeName)) {
+        null != localStorage.getItem(localStorageThemeName)) {
         let e = (o = new Map(JSON.parse(localStorage.getItem(localStorageThemeName)))).get("currentTheme");
         document.querySelector("#select_theme").value = e
     }
@@ -898,7 +898,7 @@ function initializationTheme() {
             backgroundMainTable = n[5],
             backgroundInnerTable = n[6],
             widthInterface = n[7],
-        "desktop" != game_data.device && (widthInterface = 98),
+            "desktop" != game_data.device && (widthInterface = 98),
             backgroundAlternateTableEven = backgroundContainer,
             backgroundAlternateTableOdd = getColorDarker(backgroundContainer, headerColorAlternateTable),
             console.log("textColor: " + textColor),
@@ -916,7 +916,7 @@ function initializationTheme() {
             backgroundMainTable = n[5],
             backgroundInnerTable = n[6],
             widthInterface = n[7],
-        "desktop" != game_data.device && (widthInterface = 98),
+            "desktop" != game_data.device && (widthInterface = 98),
             backgroundAlternateTableEven = backgroundContainer,
             backgroundAlternateTableOdd = getColorDarker(backgroundContainer, headerColorAlternateTable)
     }
@@ -928,10 +928,10 @@ function sendResources(e, t) {
         ajaxaction: "call",
         h: window.csrf_token
     };
-    TribalWars.post("market", n, t, function(e) {
+    TribalWars.post("market", n, t, function (e) {
         console.log(e),
             UI.SuccessMessage(e.success, 1e3)
-    }, function(e) {
+    }, function (e) {
         console.log(e)
     })
 }
@@ -945,71 +945,71 @@ async function createTable(e, t, n, o) {
             , r = e[t].total_stone
             , s = e[t].total_iron
             , l = (e[t].id_origin,
-            JSON.stringify(e[t].send_resources));
+                JSON.stringify(e[t].send_resources));
         a += `\n            <tr id="delete_row" >\n                <td>${t + 1}</td>          \n                <td><a href="${game_data.link_base_pure}info_village&id=${e[t].target_id}"><font color="${textColor}">${e[t].name_destination}</font></a></td>\n                <td>${e[t].distance.toFixed(1)}</td>\n                <td>${formatNumber(e[t].total_send)}</td>\n                <td class="hide_mobile">${formatNumber(o)}</td>\n                <td class="hide_mobile">${formatNumber(r)}</td>\n                <td class="hide_mobile">${formatNumber(s)}</td>\n                <td><input class="btn evt-confirm-btn btn-confirm-yes btn_send" target_id="${n}" data='${l}'  type="button" value="send"></td>\n   \n            </tr>`
     }
     a += "\n        </table>",
         document.getElementById("table_view").innerHTML = a,
-    "desktop" != game_data.device && $(".hide_mobile").hide(),
-        $(".btn_send").on("click", async e=>{
-                if (0 == $(e.target).is(":disabled")) {
-                    let t = $(e.target).attr("target_id")
-                        , n = JSON.parse($(e.target).attr("data"));
-                    console.log(t, n),
-                        $(".btn_send").attr("disabled", !0);
-                    let o = (new Date).getTime();
-                    sendResources(t, n);
-                    let a = (new Date).getTime() - o;
-                    window.setTimeout(()=>{
-                            $(e.target).closest("#delete_row").remove(),
-                                $(".btn_send").attr("disabled", !1)
-                        }
-                        , 200 - a)
+        "desktop" != game_data.device && $(".hide_mobile").hide(),
+        $(".btn_send").on("click", async e => {
+            if (0 == $(e.target).is(":disabled")) {
+                let t = $(e.target).attr("target_id")
+                    , n = JSON.parse($(e.target).attr("data"));
+                console.log(t, n),
+                    $(".btn_send").attr("disabled", !0);
+                let o = (new Date).getTime();
+                sendResources(t, n);
+                let a = (new Date).getTime() - o;
+                window.setTimeout(() => {
+                    $(e.target).closest("#delete_row").remove(),
+                        $(".btn_send").attr("disabled", !1)
                 }
+                    , 200 - a)
             }
+        }
         );
     let r = "" //`\n        <table id="table_stats" class="scriptTable">\n        <tr>\n            <td><input class="btn evt-confirm-btn btn-confirm-yes" id="btn_result" type="button" value="results"></td>\n            <td><input class="btn evt-confirm-btn btn-confirm-yes" id="btn_cluster" type="button" value="clusters"></td>\n            <td><img src="https://dsen.innogamescdn.com/asset/c2e59f13/graphic/buildings/wood.png"/></td>\n            <td><img src="https://dsen.innogamescdn.com/asset/c2e59f13/graphic/buildings/stone.png"/></td>\n            <td><img src="https://dsen.innogamescdn.com/asset/c2e59f13/graphic/buildings/iron.png"/></td>\n        </tr>\n        <tr>\n            <td colspan="2">total</td>\n            <td>${formatNumber(t.total_wood_home)}</td>\n            <td>${formatNumber(t.total_stone_home)}</td>\n            <td>${formatNumber(t.total_iron_home)}</td>\n       \n        </tr>\n        <tr>\n            <td colspan="2">average</td>\n            <td>${formatNumber(t.avg_wood)}</td>\n            <td>${formatNumber(t.avg_stone)}</td>\n            <td>${formatNumber(t.avg_iron)}</td>\n        </tr>\n        <tr>\n            <td colspan="2">surplus</td>\n            <td>${formatNumber(t.total_wood_send)}</td>\n            <td>${formatNumber(t.total_stone_send)}</td>\n            <td>${formatNumber(t.total_iron_send)}</td>\n        </tr>\n        <tr>\n            <td colspan="2">deficit</td>\n            <td>${formatNumber(t.total_wood_get)}</td>\n            <td>${formatNumber(t.total_stone_get)}</td>\n            <td>${formatNumber(t.total_iron_get)}</td>\n        </tr>\n\n    </table>\n    `;
     document.getElementById("table_stats").innerHTML = r,
-        $("#btn_result").on("click", ()=>{
-                //createTableResults(n)
-            }
+        $("#btn_result").on("click", () => {
+            //createTableResults(n)
+        }
         ),
-        $("#btn_cluster").on("click", ()=>{
-                //createTableClusters(o)
-            }
+        $("#btn_cluster").on("click", () => {
+            //createTableClusters(o)
+        }
         ),
-        document.getElementById("sort_distance").addEventListener("click", ()=>{
-                e.sort((e,t)=>parseFloat(e.distance) > parseFloat(t.distance) ? 1 : parseFloat(e.distance) < parseFloat(t.distance) ? -1 : 0),
-                    document.getElementById("table_stats").innerHTML = "",
-                    createTable(e, t, n, o)
-            }
+        document.getElementById("sort_distance").addEventListener("click", () => {
+            e.sort((e, t) => parseFloat(e.distance) > parseFloat(t.distance) ? 1 : parseFloat(e.distance) < parseFloat(t.distance) ? -1 : 0),
+                document.getElementById("table_stats").innerHTML = "",
+                createTable(e, t, n, o)
+        }
         ),
-        document.getElementById("sort_total").addEventListener("click", ()=>{
-                e.sort((e,t)=>e.total_send > t.total_send ? -1 : e.total_send < t.total_send ? 1 : 0),
-                    document.getElementById("table_view").innerHTML = "",
-                    createTable(e, t, n, o)
-            }
+        document.getElementById("sort_total").addEventListener("click", () => {
+            e.sort((e, t) => e.total_send > t.total_send ? -1 : e.total_send < t.total_send ? 1 : 0),
+                document.getElementById("table_view").innerHTML = "",
+                createTable(e, t, n, o)
+        }
         ),
-        document.getElementById("sort_wood").addEventListener("click", ()=>{
-                e.sort((e,t)=>e.total_wood > t.total_wood ? -1 : e.total_wood < t.total_wood ? 1 : 0),
-                    document.getElementById("table_view").innerHTML = "",
-                    createTable(e, t, n, o)
-            }
+        document.getElementById("sort_wood").addEventListener("click", () => {
+            e.sort((e, t) => e.total_wood > t.total_wood ? -1 : e.total_wood < t.total_wood ? 1 : 0),
+                document.getElementById("table_view").innerHTML = "",
+                createTable(e, t, n, o)
+        }
         ),
-        document.getElementById("sort_stone").addEventListener("click", ()=>{
-                e.sort((e,t)=>e.total_stone > t.total_stone ? -1 : e.total_stone < t.total_stone ? 1 : 0),
-                    document.getElementById("table_view").innerHTML = "",
-                    createTable(e, t, n, o)
-            }
+        document.getElementById("sort_stone").addEventListener("click", () => {
+            e.sort((e, t) => e.total_stone > t.total_stone ? -1 : e.total_stone < t.total_stone ? 1 : 0),
+                document.getElementById("table_view").innerHTML = "",
+                createTable(e, t, n, o)
+        }
         ),
-        document.getElementById("sort_iron").addEventListener("click", ()=>{
-                e.sort((e,t)=>e.total_iron > t.total_iron ? -1 : e.total_iron < t.total_iron ? 1 : 0),
-                    document.getElementById("table_view").innerHTML = "",
-                    createTable(e, t, n, o)
-            }
+        document.getElementById("sort_iron").addEventListener("click", () => {
+            e.sort((e, t) => e.total_iron > t.total_iron ? -1 : e.total_iron < t.total_iron ? 1 : 0),
+                document.getElementById("table_view").innerHTML = "",
+                createTable(e, t, n, o)
+        }
         ),
-    document.getElementsByClassName("btn_send").length > 0 && document.getElementsByClassName("btn_send")[0].focus(),
-        window.onkeydown = function(e) {
+        document.getElementsByClassName("btn_send").length > 0 && document.getElementsByClassName("btn_send")[0].focus(),
+        window.onkeydown = function (e) {
             13 == e.which && document.getElementsByClassName("btn_send").length > 0 && document.getElementsByClassName("btn_send")[0].click()
         }
 }
@@ -1024,7 +1024,7 @@ function go() {
     let whReserve = parseFloat(document.getElementById("nr_warehouse_reserve").value);
     let groupId = parseInt(document.getElementById("nr_group_id").value);
     let middleVilage = document.getElementById("coord_mint_village").value.trim();
-    start(middleVilage,{id:groupId,name:"Ost"})
+    start(middleVilage, { id: groupId, name: "Ost" })
 }
 
 

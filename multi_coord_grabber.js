@@ -66,7 +66,7 @@ ScriptAPI.register('Multicollor Coordgrab', true, 'Onbekend', 'nl.tribalwars@com
         }
     };
     var $79a03938b25da972$export$2e2bcd8739ae039 = () => $79a03938b25da972$var$translations[window.game_data.locale] || $79a03938b25da972$var$translations.en_DK
-    ;
+        ;
 
 
     const $362bcac9fa8968ec$export$f92dfeb71e9bb569 = (key, d = {}) => {
