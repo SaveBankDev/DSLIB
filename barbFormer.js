@@ -22,7 +22,7 @@ var scriptConfig = {
     translations: {
         en_DK: {
             'Barbarian Village Former': 'Barbarian Village Former',
-            Help: 'Help',
+            Help: 'Help', // Mistake?
             'Redirecting...': 'Redirecting...',
             'There was an error!': 'There was an error!',
             'There was an error while fetching the report data!':
@@ -38,7 +38,7 @@ var scriptConfig = {
         },
         de_DE: {
             'Barbarian Village Former': 'Barbarendorf Teraformer',
-            Help: 'Hilfe',
+            Help: 'Hilfe', // Mistake?
             'Redirecting...': 'Umleiten...',
             'There was an error!': 'Es gab einen Fehler!',
             'There was an error while fetching the report data!':
@@ -160,7 +160,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         });
         localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_step`, localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2')
         jQuery('#raMaxStep').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2')
-        maxStep = parseInt(localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`) ?? '2');
         jQuery('#raMaxStep').on('change', function (e) {
             e.target.value = e.target.value.replace(/\D/g, '')
             e.preventDefault();
@@ -172,7 +171,6 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
                 e.target.value = 1;
             }
             localStorage.setItem(`${scriptConfig.scriptData.prefix}_max_step`, e.target.value);
-            maxStep = parseInt(e.target.value);
         });
         localStorage.setItem(`${scriptConfig.scriptData.prefix}_min_level`, localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`) ?? '0')
         jQuery('#raMinAmount').val(localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`) ?? '0')
@@ -522,8 +520,9 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // Function to find troop combinations for a specific attack with consideration of dLastAttack
-    function findTroopCombination(playerVillage, barbarianVillage, minLevel) {
+    function findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep) {
         let combinations = [];
+
 
         while (barbarianVillage.wall > 0 || barbarianVillage.building > minLevel) {
             // Calculate the required axes for rams and catapults
@@ -607,8 +606,11 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         // Your desired min building Level
         const minLevel = localStorage.getItem(`${scriptConfig.scriptData.prefix}_min_level`);
 
+        // desired maxStep
+        const maxStep = localStorage.getItem(`${scriptConfig.scriptData.prefix}_max_step`);
 
-        const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance);
+
+        const troopCombinations = findTroopCombinations(troopData, farmingData, minLevel, maxDistance, maxStep);
         console.log(troopCombinations);
         console.log('##Done##')
         return troopCombinations;
