@@ -517,56 +517,82 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
     }
 
     // Function to find troop combinations for a specific attack with consideration of dLastAttack
-    function findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep, spyAmount) {
+    function findTroopCombination(playerVillage, barbarianVillage, distance, minLevel, maxStep, spyAmount) {
         let combinations = [];
+        let maxReduction = 0;
+        let catapultsRequired = 0;
 
+        // Get the required rams to reduce wall to 0
+        const ramsReq = ramsRequired[barbarianVillage.wall];
+        // Calculate the required axes for rams
+        const axesRequired = Math.ceil(axesRequired(barbarianVillage.wall));
 
-        while (barbarianVillage.wall > 0 || barbarianVillage.building > minLevel) {
-            // Calculate the required axes for rams and catapults
-            const axesRequired = Math.ceil(axesRequired(barbarianVillage.wall));
-
-            // Check if the available troops are sufficient in the player village
-            if (playerVillage.axe >= axesRequired && playerVillage.spy >= spyAmount) {
-                // Reduce wall level to 0
-                let ramsReq = ramsRequired[barbarianVillage.wall];
-                let maxReduction = requiredCatas(playerVillage.catapult, barbarianVillage.building, minLevel, maxStep);
-                let catapultsRequired = catsRequiredToBreak[barbarianVillage.building - maxReduction][barbarianVillage.building];
-
-                // Check any building reduction can be done
-                if (ramsReq && playerVillage.ram >= ramsReq || catapultsRequired && playerVillage.catapult >= catapultsRequired) {
-                    if (playerVillage.ram >= ramsReq) {
-                        barbarianVillage.wall = 0;
-                    } else {
-                        break;
-                        //not enough to reduce wall to 0
-                    }
-                    if (playerVillage.catapult >= catapultsRequired) {
-                        playerVillage.catapult -= catapultsRequired;
-                        barbarianVillage.building -= maxReduction;
-                    } else {
-                        maxReduction = 0;
-                        catapultsRequired = 0;
-                    }
-                    playerVillage.axe -= axesRequired;
-
-
-                    // Update dLastAttack for the barbarian village
-                    const distance = twSDK.calculateDistance(playerVillage.coord, barbarianVillage.coord);
-                    barbarianVillage.dLastAttack = distance
-                    combinations.push({
-                        barbarianVillage,
-                        playerVillage,
-                        axe: axesRequired,
-                        spy: spyAmount,
-                        ram: ramsReq,
-                        catapult: catapultsRequired,
-                        reducedBuildingLevel: maxReduction,
-                        distance: distance,
-                    });
-                }
-            }
+        // If there is a wall and we either dont have enough axes or rams to reduce it to 0 we quit
+        // We also quit if there are not enough spies
+        if ((barbarianVillage.wall > 0 && (playerVillage.ram < ramsReq || playerVillage.axe < axesRequired)) || playerVillage.spy < spyAmount) {
+            return combinations;
         }
 
+        // Now if there is a wall we know that we can destroy it and so we do
+        // Doing it this way and not sending any catapults in the ram attack might be a waste of a spy but it makes the code nicer to look at imo
+        if (barbarianVillage.wall > 0) {
+            // we set the wall to 0 and subtract used axes and rams and spies
+            playerVillage.axe -= axesRequired;
+            playerVillage.ram -= ramsReq;
+            barbarianVillage.wall = 0;
+            playerVillage.spy -= spyAmount;
+
+
+            // TODO What does this do?
+            barbarianVillage.dLastAttack = distance;
+
+            // We add the Wall bash attack to our attack list
+            combinations.push({
+                barbarianVillage,
+                playerVillage,
+                axe: axesRequired,
+                spy: spyAmount,
+                ram: ramsReq,
+                catapult: 0,
+                distance: distance
+            });
+        }
+
+        // Now that the wall is 0 we can start destroying the building while considering maxStep
+        // Run the loop while the building is above minLevel and the playerVillage has enough spies
+        while (barbarianVillage.building > minLevel && playerVillage.spy >= spyAmount) {
+            // Check how many building levels we can destroy in this attack 
+            maxReduction = requiredCatas(playerVillage.catapult, barbarianVillage.building, minLevel, maxStep);
+            // Check how many catapults we need to destroy those building levels
+            catapultsRequired = catsRequiredToBreak[barbarianVillage.building - maxReduction][barbarianVillage.building];
+
+            // If we can't destroy a building level we quit
+            if (maxReduction == 0) {
+                break;
+            }
+
+            // If we can destroy at least one building level we subtract used catapults and spies and we subtract the destroyed building level
+            playerVillage.catapult -= catapultsRequired;
+            barbarianVillage.building -= maxReduction;
+            playerVillage.spy -= spyAmount;
+
+            // Update dLastAttack for the barbarian village
+            // TODO What does this do?
+            barbarianVillage.dLastAttack = distance;
+
+            // Add the attack to our attack list
+            combinations.push({
+                barbarianVillage,
+                playerVillage,
+                axe: 0,
+                spy: spyAmount,
+                ram: 0,
+                catapult: catapultsRequired,
+                distance: distance
+            });
+        }
+
+        // Return all the attacks
         return combinations;
     }
 
@@ -577,8 +603,8 @@ $.getScript(`https://twscripts.dev/scripts/twSDK.js?url=${document.currentScript
         const allCombinations = calculateAllCombinations(playerVillages, barbarianVillages, minLevel, maxDistance);
 
         for (const combination of allCombinations) {
-            const { playerVillage, barbarianVillage } = combination;
-            const troopCombinations = findTroopCombination(playerVillage, barbarianVillage, minLevel, maxStep, spyAmount);
+            const { playerVillage, barbarianVillage, distance } = combination;
+            const troopCombinations = findTroopCombination(playerVillage, barbarianVillage, distance, minLevel, maxStep, spyAmount);
 
             if (troopCombinations.length) {
                 result = result.concat(troopCombinations);
