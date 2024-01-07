@@ -22,7 +22,7 @@ var scriptConfig = {
     translations: {
         en_DK: {
             'Barbarian Village Former': 'Barbarian Village Former',
-            Help: 'Help', // Mistake?
+            Help: 'Help',
             'Redirecting...': 'Redirecting...',
             'There was an error!': 'There was an error!',
             'There was an error while fetching the report data!':
@@ -38,7 +38,7 @@ var scriptConfig = {
         },
         de_DE: {
             'Barbarian Village Former': 'Barbarendorf Teraformer',
-            Help: 'Hilfe', // Mistake?
+            Help: 'Hilfe',
             'Redirecting...': 'Umleiten...',
             'There was an error!': 'Es gab einen Fehler!',
             'There was an error while fetching the report data!':
